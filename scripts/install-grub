@@ -1,0 +1,22 @@
+#! /bin/sh
+
+# Copyright (C) 2025 PLAYThe218
+# Author: playthe218 <playthe218@icloud.com>
+
+# Install a bootable GRUB even if Secure Boot is installed.
+# This script do NOT handle Shim or the Hardware Secure Boot Policies.
+
+# This script will assume the boot directory is at /boot and ESP is mounted to /boot/efi.
+
+if [[ $EUID -ne 0 ]]; then
+	echo -e "[\e[31m!\e[0m] Can not continue since you are not root!"
+	exit 1
+fi
+
+grub-install --target=x86_64-efi --efi-directory=/boot/efi --boot-directory=/boot --sbat=/usr/share/grub/sbat.csv --bootloader-id=GRUB --modules="all_video bli boot btrfs cat chain configfile echo efifwsetup efinet ext2 fat font gettext gfxmenu gfxterm gfxterm_background gzio halt help hfsplus iso9660 jpeg keystatus loadenv loopback linux ls lsefi lsefimmap lsefisystab lssal memdisk minicmd normal part_apple part_msdos part_gpt password_pbkdf2 png probe reboot regexp search search_fs_uuid search_fs_file search_label serial sleep smbios squash4 test tpm true video xfs zfs zfscrypt zfsinfo play cpuid tpm cryptodisk luks lvm"
+
+echo -e "[\e[34m*\e[0m] GRUB installation finished."
+
+mv /boot/efi/EFI/GRUB/grubx64.efi /boot/efi/EFI/BOOT/grubx64.efi
+rm -rf /boot/efi/EFI/GRUB/
+echo -e "[\e[34m*\e[0m] Boot File move completed."
