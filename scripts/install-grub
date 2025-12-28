@@ -1,22 +1,33 @@
-#! /bin/sh
+#! /bin/bash
 
 # Copyright (C) 2025 PLAYThe218
 # Author: playthe218 <playthe218@icloud.com>
 
+# This script is released under MIT License.
+# See LICENSE file in the project root for full license terms.
+
 # Install a bootable GRUB even if Secure Boot is installed.
 # This script do NOT handle Shim or the Hardware Secure Boot Policies.
 
-# This script will assume the boot directory is at /boot and ESP is mounted to /boot/efi.
+# This script will assume the boot directory is mounted(or with /) at /boot, ESP is mounted to /boot/efi and MOK is at /etc/secureboot by default.
+
+BOOT_DIR="/boot"
+ESP="/boot/efi"
+MOK_KEY_DIR="/etc/secureboot/"
 
 if [[ $EUID -ne 0 ]]; then
-	echo -e "[\e[31m!\e[0m] Can not continue since you are not root!"
+	echo -e "[\e[31m!\e[0m] error: Unable to proceed: Are you root?"
 	exit 1
 fi
+
+if [[ ! -f "/usr/bin/grub-install" ]] || [[ ! -f "/usr/bin/sbsign" ]]; then
+	echo -e "[\e[31m!\e[0m] error: Unable to proceed: Have you installed GRUB and sbsigntools?"
+	exit 1
 
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --boot-directory=/boot --sbat=/usr/share/grub/sbat.csv --bootloader-id=GRUB --modules="all_video bli boot btrfs cat chain configfile echo efifwsetup efinet ext2 fat font gettext gfxmenu gfxterm gfxterm_background gzio halt help hfsplus iso9660 jpeg keystatus loadenv loopback linux ls lsefi lsefimmap lsefisystab lssal memdisk minicmd normal part_apple part_msdos part_gpt password_pbkdf2 png probe reboot regexp search search_fs_uuid search_fs_file search_label serial sleep smbios squash4 test tpm true video xfs zfs zfscrypt zfsinfo play cpuid tpm cryptodisk luks lvm"
 
 echo -e "[\e[34m*\e[0m] GRUB installation finished."
 
-mv /boot/efi/EFI/GRUB/grubx64.efi /boot/efi/EFI/BOOT/grubx64.efi
+sbsign --key $MOK_KEY_DIR/MOK.key --cert $MOK_KEY_DIR/MOK.crt --output /boot/efi/EFI/BOOT/grubx64.efi /boot/efi/EFI/GRUB/grubx64.efi
 rm -rf /boot/efi/EFI/GRUB/
-echo -e "[\e[34m*\e[0m] Boot File move completed."
+echo -e "[\e[34m*\e[0m] File signing and moving completed."

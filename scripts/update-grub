@@ -3,12 +3,20 @@
 # Copyright (C) 2025 PLAYThe218
 # Author: playthe218 <playthe218@icloud.com>
 
-# Update grub config.
+# This script is released under MIT License.
+# See LICENSE file in the project root for full license terms.
+
+# Update grub.cfg.
 
 # This script will assume the boot directory is at /boot and grub.cfg is at /boot/grub/grub.cfg.
 
 if [[ $EUID -ne 0 ]]; then
-	echo -e "[\e[31m!\e[0m] Can not continue since you are not root!"
+	echo -e "[\e[31m!\e[0m] error: Unable to proceed: Are you root?"
+	exit 1
+fi
+
+if [[ ! -f "/usr/bin/grub-mkconfig" ]]; then
+	echo -e "[\e[31m!\e[0m] error: Unable to proceed: Have you installed GRUB?"
 	exit 1
 fi
 
