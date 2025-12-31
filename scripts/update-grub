@@ -10,6 +10,8 @@
 
 # This script will assume the boot directory is at /boot and grub.cfg is at /boot/grub/grub.cfg.
 
+BOOT_DIR=/boot
+
 if [[ $EUID -ne 0 ]]; then
 	echo -e "[\e[31m!\e[0m] error: Unable to proceed: Are you root?"
 	exit 1
@@ -20,6 +22,6 @@ if [[ ! -f "/usr/bin/grub-mkconfig" ]]; then
 	exit 1
 fi
 
-LANG="en_US.UTF-8" grub-mkconfig -o /boot/grub/grub.cfg
+LANG="en_US.UTF-8" grub-mkconfig -o $BOOT_DIR/grub/grub.cfg
 
 echo -e "[\e[34m*\e[0m] GRUB config update completed."

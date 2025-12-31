@@ -25,10 +25,10 @@ if [[ ! -f "/usr/bin/grub-install" ]] || [[ ! -f "/usr/bin/sbsign" ]]; then
 	exit 1
 fi
 
-grub-install --target=x86_64-efi --efi-directory=/boot/efi --boot-directory=/boot --sbat=/usr/share/grub/sbat.csv --bootloader-id=GRUB --modules="all_video bli boot btrfs cat chain configfile echo efifwsetup efinet ext2 fat font gettext gfxmenu gfxterm gfxterm_background gzio halt help hfsplus iso9660 jpeg keystatus loadenv loopback linux ls lsefi lsefimmap lsefisystab lssal memdisk minicmd normal part_apple part_msdos part_gpt password_pbkdf2 png probe reboot regexp search search_fs_uuid search_fs_file search_label serial sleep smbios squash4 test tpm true video xfs zfs zfscrypt zfsinfo play cpuid tpm cryptodisk luks lvm"
+grub-install --target=x86_64-efi --efi-directory=$ESP --boot-directory=$BOOT_DIR --sbat=/usr/share/grub/sbat.csv --bootloader-id=GRUB --modules="all_video bli boot btrfs cat chain configfile echo efifwsetup efinet ext2 fat font gettext gfxmenu gfxterm gfxterm_background gzio halt help hfsplus iso9660 jpeg keystatus loadenv loopback linux ls lsefi lsefimmap lsefisystab lssal memdisk minicmd normal part_apple part_msdos part_gpt password_pbkdf2 png probe reboot regexp search search_fs_uuid search_fs_file search_label serial sleep smbios squash4 test tpm true video xfs zfs zfscrypt zfsinfo play cpuid tpm cryptodisk luks lvm"
 
 echo -e "[\e[34m*\e[0m] GRUB installation finished."
 
-sbsign --key $MOK_KEY_DIR/MOK.key --cert $MOK_KEY_DIR/MOK.crt --output /boot/efi/EFI/BOOT/grubx64.efi /boot/efi/EFI/GRUB/grubx64.efi
-rm -rf /boot/efi/EFI/GRUB/
+sbsign --key $MOK_KEY_DIR/MOK.key --cert $MOK_KEY_DIR/MOK.crt --output $ESP/EFI/BOOT/grubx64.efi $ESP/EFI/GRUB/grubx64.efi
+rm -rf $ESP/EFI/GRUB/
 echo -e "[\e[34m*\e[0m] File signing and moving completed."
